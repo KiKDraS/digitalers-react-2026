@@ -1,56 +1,16 @@
-# Digitalers 2026
+# React + Vite
 
-Repositorio creado para el trabajo con los alumnos del curso Front End del
-programa Digitalers dictado desde Junio hasta Noviembre del año 2026. El curso está
-orientado a personas sin conocimientos previos. Se trabaja sobre los conceptos
-principales del desarrollo web, se hace una introducción a las herramientas más
-comunes del trabajo y se culmina con un trabajo de Desarrollo Web utilizando la
-librería React.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Temas abordados
+Currently, two official plugins are available:
 
-- HTML
-- CSS
-- Javascript
-- React JS
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Organización
+## React Compiler
 
-La cursada se divide en tres módulos de trabajo.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- Introducción al Desarrollo Web.
-- Introducción a la Programación
-- Desarrollo de SPA utilizando React
+## Expanding the ESLint configuration
 
-### Introducción al Desarrollo Web
-
-En este módulo se trabaja con
-
-- Lenguaje HTML
-- Lenguaje CSS
-- Visual Studio Code
-- Git y GitHub
-
-### Introducción a la Programación
-
-En este módulo se trabaja con
-
-- Introducción a los conceptos básicos de la Programación
-- Programación utilizando el Lenguaje Javascript
-- Introducción a la Programación Funcional
-- Introducción a la Programación Orienta a Objetos
-
-### Desarrollo de SPA utilizando React
-
-En este módulo se trabaja con
-
-- State, props y árbol de Componentes
-- Componentes funcionales y Hooks
-- Creación de rutas utilizando React Router DOM
-- Manejo de State por fuera del árbol de Componentes utilizando Context API y
-  React Redux
-
-## Sobre el repositorio
-
-Este repositorio corresponde a la parte teórica del módulo <b>Desarrollo de SPA
-utilizando React</b>
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

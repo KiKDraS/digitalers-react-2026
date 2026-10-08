@@ -1,0 +1,10 @@
+.cartel {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-h);
+    background: var(--code-bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 10px 24px;
+    margin-bottom: 24px;
+}
