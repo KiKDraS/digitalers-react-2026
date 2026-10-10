@@ -1,183 +1,117 @@
-import { useState } from "react";
-import "./App.css";
-import heroImg from "./assets/hero.png";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import { Cartel } from "./components/Cartel";
-import { ComponenteImpuro } from "./components/ComponenteImpuro";
-import { MiComponente } from "./components/MiComponente";
-
 /*
-  https://es.react.dev/ - Documentación Oficial
+  React === Librería para construir UI
 
-  React
-    -> Librería JS para la manipulación de las vistas
-    -> Simplifica la modificación del DOM cuando sea necesario
-    -> ¿Cómo sabe React cuando es necesario modificar el DOM?
-      -> React utiliza los valores de State para lanzar su flujo de actualización de DOM
-      -> Para modificar una vista en React tengo que modificar un valor de State
-      
-  Flujo de actualización de DOM 
-    -> Virtual DOM 
-      -> Copia propia de React del DOM real     
-      -> Sabe cuáles son los valores de State presentes en el proyecto        
-
-  JSX (JavaScript XML)
-    -> Extensión de sintaxis de JS que simula ser código HTML
-
-  ¿Qué es un Componente de React?
-    => Función que retorna JSX === Es una función que retorna una vista
-    => Función que puede recibir datos
-        => Props === Parámetros
-    => Es una función que puede utilizar State    
-
-  Props
-    -> Equivalente a un parámetro de función
-    -> Objeto Props  
-      -> Puede recibir cualquier dato válido en JS
-      -> Es necesario destructurar el objeto
-      -> Las claves son el nombre del "atributo html"
+  Componente
+    => Función que se usa para crear UI (User Interface)
+      -> Retorna una vista
+    => Pueden generar una UI interactiva (Componente Funcional)
+    => Pueden generar una UI estática (Componente de Renderizado) 
+    => Elemento re-utilizable
+    => Solo puede retornar un dato
+      -> En JSX, cada "Etiqueta HTML" representa un dato
+      -> <></> - Fragment: Permite devolver un único dato conformado por varios Elementos JSX ("Etiquetas HTML")
+    => Los componentes retornan vista  
 
   State
-    -> Elemento que se utiliza para registrar el estado de un componente y saber cuando hay un cambio
-    -> El trabajo con State permite crear un Código Reactivo
-    -> Version 16.8 
-      -> Hooks - Son funciones con características propias de React
-        -> useState - Hook que permite agregar un valor de State
-          -> Retorna un tupla (array de dos posiciones)
-            -> array[0] = valor actual del state
-            -> array[1] = función actualizadora del state
+    -> "variable" que permite identificar cambios
+
+  Props
+    -> Equivalente a Parámetros de una función
+    -> El Objeto Props
+      -> Para trabajar con props es necesario destructurar el objeto
+      -> Los "Argumentos" se pasan como "Atributos de Etiqueta HTML"
+
+  Virtual DOM
+    -> Copia almacenada en la memoria de nuestra aplicación
+    -> Lee los cambios de state (actualización del valor almacenado en la 'variable' state) y optimiza la actualización del Árbol de Nodos del DOM
+
+  Renderizado Condicional
+    -> Es una técnica que utiliza condiciones para indicar qué se debe mostrar  
+    -> Con Renderizado Condicional definimos qué mostrar u ocultar
+    -> Renderizar === Mostrar contenido
+
+  Falsies - En condiciones, equivale a false
+    => 0
+    => -0
+    => false
+    => undefined
+    => null
+    => NaN
+    => ""           
+
+  Trusties - En condiciones, equivale a true
+    => Todo lo que no sea un Falsie
 */
 
+import { useState } from "react";
+import { Button } from "./components/Button";
+import { PensarReact } from "./components/pensar-react/PensarReact";
+
 function App() {
-  // 0 - Valor almacenado en count cuando inicia la aplicación
-  const [count, setCount] = useState(0);
-  // const tupla = useState(0);
-  // const [count, setCount] = tupla;
+  // show - Valor actual | En el primer render: false
+  // setShow - Función actualizadora del state
+  const [show, setShow] = useState(false);
+
+  const handleClick = () => {
+    // setShow(true); - Paso el nuevo valor
+    const cb = (prev) => !prev;
+    setShow(cb);
+  };
+
+  // Early Return - Genera la vista con el <section>...</section>
+  if (false) {
+    return (
+      <section>
+        <h2>Hola Mundo!</h2>
+      </section>
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+    <main>
+      <h1>Clase 37</h1>
+      <p>Componentes, State, Props y Virtual DOM</p>
+      <section>
+        <h2>State y Props</h2>
+        <ul>
+          <li>State</li>
+          <li>Props</li>
+        </ul>
       </section>
-
-      <Cartel
-        text="Mi cartel"
-        number={count}
-        booleano={true}
-        miFn={() => {}}
-        arr={[]}
-        obj={{}}
-      />
-
-      <ComponenteImpuro />
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-
       <hr />
-      <MiComponente />
-    </>
+      <section>
+        <h2>Renderizado Condicional</h2>
+        <p>
+          Permite indicar qué elemento se va a mostrar utilizando condiciones
+        </p>
+        <ul>
+          <li>
+            Early return - Cortar la ejecución de la función ANTES de que ser
+            ejecute todo el código
+          </li>
+          <li>Operador Ternario</li>
+          <li>
+            Operadores de corto-circuito
+            <ul>
+              <li>&&</li>
+            </ul>
+          </li>
+        </ul>
+        {/* Ejecución -> Argumentos -> Atributos textos y cb */}
+        <Button texto={show ? "Ocultar" : "Mostrar"} cb={handleClick} />
+      </section>
+      <hr />
+      {/* 
+        condición -> false && true -> false
+          -> show: false
+          -> JSX: true
+      */}
+      {show && (
+        <section>
+          <PensarReact />
+        </section>
+      )}
+    </main>
   );
 }
 
