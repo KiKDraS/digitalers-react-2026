@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clase React: Hooks, Composición y AJAX</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      /* Aumentar el ancho máximo y centrar */
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+      background-color: #f8f9fa;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      color: #2c3e50;
+      border-bottom: 2px solid #4a90e2;
+      padding-bottom: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      border-bottom: none;
+    }
+
+    pre {
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      /* Mejorar legibilidad del código */
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+      /* Ancho flexible pero con límite */
+      width: 100%;
+      max-width: 100%;
+    }
+
+    hr {
+      margin: 50px 0;
+    }
+
+    .note {
+      background-color: #e7f3ff;
+      border-left: 4px solid #4a90e2;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .warning-note {
+      background-color: #fffbe6;
+      border-left: 4px solid #f0ad4e;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>React: Custom Hooks, Composición y AJAX 🚀</h1>
+  </div>
+
+  <!-- ==================== CUSTOM HOOKS ==================== -->
+  <div class="container">
+    <h2>Custom Hooks: Creando Lógica Reutilizable</h2>
+    <p>Un <strong>custom hook</strong> es una función JavaScript que utiliza hooks de React internamente y que podemos
+      reutilizar en distintos componentes. Nos permite extraer lógica con estado para no repetir código.</p>
+
+    <h3>Ejemplo: <code>useLocalStorage</code></h3>
+    <p>Hook que sincroniza un estado con <code>localStorage</code>.</p>
+    <pre><code class="language-jsx">
+import { useState, useEffect } from 'react';
+
+// Hook personalizado
+function useLocalStorage(key, initialValue) {
+  // Estado inicial: lee de localStorage si existe
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      return initialValue;
+    }
+  });
+
+  // Efecto: guarda en localStorage cada vez que cambia el estado
+  useEffect(() => {
+    window.localStorage.setItem(key, JSON.stringify(storedValue));
+  }, [key, storedValue]);
+
+  // Retorna el estado y la función para actualizarlo
+  return [storedValue, setStoredValue];
+}
+
+// Uso en un componente
+function App() {
+  const [nombre, setNombre] = useLocalStorage('nombre', 'Invitado');
+  return (
+    &lt;input
+      value={nombre}
+      onChange={e =&gt; setNombre(e.target.value)}
+    /&gt;
+  );
+}
+    </code></pre>
+  </div>
+
+  <!-- ==================== COMPOSICIÓN ==================== -->
+  <div class="container">
+    <h2>Composición: Construyendo UIs como Legos 🧩</h2>
+    <p>La composición consiste en crear componentes pequeños y reutilizables que se combinan para formar interfaces más
+      complejas.</p>
+
+    <h3>Ejemplo básico: Tarjeta de Alerta</h3>
+    <pre><code class="language-jsx">
+// Componente genérico
+function Card({ children }) {
+  return &lt;div className="card shadow-sm"&gt;{children}&lt;/div&gt;;
+}
+
+// Componente específico que usa Card
+function AlertCard() {
+  return (
+    &lt;Card&gt;
+      &lt;div className="card-body"&gt;
+        &lt;h3 className="card-title text-danger"&gt;⚠️ ¡Acción Requerida!&lt;/h3&gt;
+        &lt;p className="card-text"&gt;Debes actualizar tu información de perfil.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/Card&gt;
+  );
+}
+    </code></pre>
+    <p>La prop <code>children</code> permite inyectar contenido dentro del componente.</p>
+  </div>
+
+  <!-- ==================== FORMULARIOS CON COMPOSICIÓN ==================== -->
+  <div class="container">
+    <h2>Formularios con Composición 📝</h2>
+    <p>Vamos a separar la lógica del formulario (hook), los campos de entrada (componente <code>Input</code>) y el
+      contenedor (componente <code>Form</code>).</p>
+
+    <h3>Paso 1: Hook <code>useForm</code></h3>
+    <pre><code class="language-jsx">
+import { useState } from 'react';
+
+// Hook para manejar el estado de un formulario
+function useForm(initialState = {}) {
+  const [formData, setFormData] = useState(initialState);
+
+  const handleChange = (e) =&gt; {
+    const { name, value } = e.target;
+    setFormData(prev =&gt; ({ ...prev, [name]: value }));
+  };
+
+  return { formData, handleChange };
+}
+    </code></pre>
+
+    <h3>Paso 2: Componente <code>Input</code></h3>
+    <pre><code class="language-jsx">
+// Componente de input reutilizable con etiqueta
+function Input({ label, name, ...rest }) {
+  return (
+    &lt;div className="mb-3"&gt;
+      &lt;label htmlFor={name} className="form-label"&gt;{label}&lt;/label&gt;
+      &lt;input id={name} name={name} className="form-control" {...rest} /&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h3>Paso 3: Componente <code>Form</code></h3>
+    <pre><code class="language-jsx">
+// Contenedor de formulario con título y manejo de envío
+function Form({ title, onSubmit, children }) {
+  return (
+    &lt;div className="card shadow-sm"&gt;
+      &lt;div className="card-body p-4"&gt;
+        &lt;h2 className="card-title text-center mb-4"&gt;{title}&lt;/h2&gt;
+        &lt;form onSubmit={onSubmit}&gt;
+          {children}
+        &lt;/form&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <h3>Paso 4: Componer todo en <code>LoginForm</code></h3>
+    <pre><code class="language-jsx">
+function LoginForm() {
+  const { formData, handleChange } = useForm({ email: '', password: '' });
+
+  const handleSubmit = (e) =&gt; {
+    e.preventDefault();
+    alert(`Iniciando sesión con: ${formData.email}`);
+  };
+
+  return (
+    &lt;Form title="Iniciar Sesión" onSubmit={handleSubmit}&gt;
+      &lt;Input
+        label="Correo Electrónico"
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+      /&gt;
+      &lt;Input
+        label="Contraseña"
+        type="password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+      /&gt;
+      &lt;button type="submit" className="btn btn-primary w-100 mt-3"&gt;
+        Ingresar
+      &lt;/button&gt;
+    &lt;/Form&gt;
+  );
+}
+    </code></pre>
+    <p>Con esta estructura cada pieza es reutilizable en otros formularios.</p>
+  </div>
+
+  <!-- ==================== AJAX ==================== -->
+  <div class="container">
+    <h2>Peticiones AJAX y Manejo de Estados Asíncronos 🌐</h2>
+    <p>Veremos dos formas de manejar la carga de datos desde una API.</p>
+
+    <hr>
+
+    <h3>Enfoque 1 (Clásico): <code>useEffect</code> + <code>useState</code></h3>
+    <p>Usamos estados separados para datos, carga y error.</p>
+
+    <pre><code class="language-jsx">
+import { useState, useEffect } from 'react';
+
+// Componente de carga reutilizable
+function Spinner() {
+  return (
+    &lt;div className="d-flex justify-content-center p-4"&gt;
+      &lt;div className="spinner-border" role="status"&gt;
+        &lt;span className="visually-hidden"&gt;Cargando...&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Reiniciamos estados al cambiar userId
+    setLoading(true);
+    setError(null);
+    setUser(null);
+
+    const fetchUser = async () =&gt; {
+      try {
+        const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
+        if (!response.ok) throw new Error('No se pudo obtener el usuario.');
+        const data = await response.json();
+        setUser(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  if (loading) return &lt;Spinner /&gt;;
+  if (error) return &lt;div className="alert alert-danger"&gt;Error: {error}&lt;/div&gt;;
+
+  return (
+    &lt;div className="card shadow-sm"&gt;
+      &lt;div className="card-body"&gt;
+        &lt;h2 className="card-title"&gt;{user.name}&lt;/h2&gt;
+        &lt;p className="card-text"&gt;Email: {user.email}&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+
+    <hr>
+
+    <h3>Enfoque 2: <code>Suspense</code> para Code-Splitting (React 18 y anterior)</h3>
+    <p>
+      <code>&lt;Suspense&gt;</code> se usaba principalmente para <strong>carga diferida de componentes</strong> con
+      <code>React.lazy()</code>.
+      Para capturar errores necesitamos un <strong>Error Boundary</strong> (único caso donde se usa una clase).
+    </p>
+
+    <h4>1. Error Boundary reutilizable (clase)</h4>
+    <pre><code class="language-jsx">
+import React from 'react';
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error atrapado:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+    </code></pre>
+    <div class="note">
+      <p>Los Error Boundaries solo pueden ser componentes de clase porque usan métodos de ciclo de vida específicos.</p>
+    </div>
+
+    <h4>2. Uso de <code>React.lazy</code> y <code>Suspense</code></h4>
+    <pre><code class="language-jsx">
+import React, { Suspense, lazy } from 'react';
+import ErrorBoundary from './ErrorBoundary';
+
+function Spinner() {
+  return &lt;div className="text-center p-4"&gt;Cargando componente...&lt;/div&gt;;
+}
+
+const UserProfileDetails = lazy(() =&gt; import('./UserProfileDetails'));
+
+function UserProfileLazy() {
+  return (
+    &lt;div className="card"&gt;
+      &lt;div className="card-header"&gt;
+        &lt;h3&gt;Perfil de Usuario (Lazy Loaded)&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div className="card-body"&gt;
+        &lt;ErrorBoundary fallback={&lt;div className="alert alert-danger"&gt;No se pudo cargar el componente.&lt;/div&gt;}&gt;
+          &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+            &lt;UserProfileDetails userId={1} /&gt;
+          &lt;/Suspense&gt;
+        &lt;/ErrorBoundary&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+    </code></pre>
+  </div>
+
+</body>
+
+</html>
