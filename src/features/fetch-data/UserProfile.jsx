@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Spinner } from "./components/Spinner";
 
-// Cambie la variable para que sea endpoint así se pueden diferenciar los ejemplos. Dejo comentado el loader
+// Cambie la variable para que sea endpoint así se pueden diferenciar los ejemplos.
 export default function UserProfile({ endpoint }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
