@@ -4,13 +4,13 @@ export const Button = ({
   type = "button",
   text = "Mi Botón",
   color = "primary",
-  handleClick = () => {},
+  ...rest
 }) => {
   return (
     <button
       type={type}
-      className={`btn mt-3 ${colorMapper[color] ?? colorMapper["primary"]}`}
-      onClick={handleClick}
+      className={`btn ${colorMapper[color] ?? colorMapper["primary"]}`}
+      {...rest}
     >
       {text}
     </button>
