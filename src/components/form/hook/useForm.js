@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export const useForm = (initialForm = {}) => {
   const [form, setForm] = useState(initialForm);
@@ -10,5 +10,5 @@ export const useForm = (initialForm = {}) => {
     }));
   };
 
-  return { form, handleChange, updateForm: setForm };
+  return useMemo(() => ({ form, handleChange, updateForm: setForm }), [form]);
 };
