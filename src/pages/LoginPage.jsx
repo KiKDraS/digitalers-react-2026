@@ -3,6 +3,7 @@ import { Button } from "../components/button/Button";
 import { Form } from "../components/form/components/Form";
 import { Input } from "../components/form/components/Input";
 import { useForm } from "../components/form/hook/useForm";
+import { Section } from "../components/Section";
 import { useAuthContext } from "../features/auth/context/AuthProvider";
 import { ROUTES } from "./constants";
 
@@ -30,28 +31,26 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="container mt-5 d-flex justify-content-center">
-      <div className="card shadow-sm col-12 col-md-8 col-lg-6 mx-auto">
-        <Form handleSubmit={handleSubmit} title="Iniciar Sesión">
-          <Input
-            label="Email"
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-          <Input
-            label="Password"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-          />
-          <div className="d-flex justify-content-center align-items-center gap-4">
-            <Button type="submit" color="primary" text="Ingresar" />
-          </div>
-        </Form>
-      </div>
-    </div>
+    <Section>
+      <Form handleSubmit={handleSubmit} title="Iniciar Sesión">
+        <Input
+          label="Email"
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+        />
+        <Input
+          label="Password"
+          name="password"
+          type="password"
+          value={form.password}
+          onChange={handleChange}
+        />
+        <div className="d-flex justify-content-center align-items-center gap-4">
+          <Button type="submit" color="primary" text="Ingresar" />
+        </div>
+      </Form>
+    </Section>
   );
 };

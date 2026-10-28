@@ -1,17 +1,14 @@
 import { createContext, useContext, useState } from "react";
 import { USER_STORAGE_KEY } from "../constants";
 import { assignRole } from "../utils/roles";
-import { createToken, decodeToken } from "../utils/tokenHelpers";
+import { createToken } from "../utils/tokenHelpers";
 
 // 1. Crear Contexto
 const AuthContext = createContext(null);
 
 // 2. Crear Provider
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const storageToken = localStorage.getItem(USER_STORAGE_KEY);
-    return storageToken ? decodeToken(storageToken) : null;
-  });
+  const [user, setUser] = useState({ name: "ADMIN", email: "admin@test.com" });
 
   const login = (username) => {
     const user = { username, role: assignRole(username) };

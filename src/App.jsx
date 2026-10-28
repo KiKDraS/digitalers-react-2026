@@ -12,13 +12,9 @@ const router = createBrowserRouter([
     element: <Layout />, // Elemento que se renderiza siempre
     children: [
       // ===== RUTAS PÚBLICAS =====
-      // Accesibles para cualquiera: se agregan como hijas directas del Layout.
-      // Cada ruta nueva solo necesita una línea aquí.
       { path: ROUTES.LOGIN, element: <LoginPage /> },
 
       // ===== RUTAS PROTEGIDAS =====
-      // Requieren sesión: se agrupan bajo ProtectedRoute (layout route).
-      // Agregar una ruta nueva dentro de este children la protege automáticamente.
       {
         element: <ProtectedRoute />,
         children: [{ index: true, element: <HomePage /> }],

@@ -1,7 +1,7 @@
 /*
-    Permite la simulación de trabajo con JWT "token".
+  Permite la simulación de trabajo con JWT "token".
 
-    NO APTO PARA PRODUCCIÓN
+  NO APTO PARA PRODUCCIÓN
 */
 
 // Simular creación de JWT
