@@ -4,6 +4,8 @@
   NO APTO PARA PRODUCCIÓN
 */
 
+import { USER_STORAGE_KEY } from "../constants";
+
 // Simular creación de JWT
 export const createToken = (user) => {
   try {
@@ -24,4 +26,9 @@ export const decodeToken = (token) => {
     console.error("Error decoding token", error);
     return null;
   }
+};
+
+export const setSessionToken = (user) => {
+  const token = createToken(user);
+  localStorage.setItem(USER_STORAGE_KEY, token);
 };

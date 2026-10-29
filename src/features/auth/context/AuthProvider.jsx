@@ -1,30 +1,41 @@
 import { createContext, useContext, useState } from "react";
-import { USER_STORAGE_KEY } from "../constants";
-import { assignRole } from "../utils/roles";
-import { createToken } from "../utils/tokenHelpers";
+import { authApi } from "../services/authApi";
 
 // 1. Crear Contexto
 const AuthContext = createContext(null);
 
 // 2. Crear Provider
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({ name: "ADMIN", email: "admin@test.com" });
+  const [user, setUser] = useState(authApi.loginCheck());
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const login = (username) => {
-    const user = { username, role: assignRole(username) };
-    setUser(user);
+  const login = async (credentials) => {
+    setIsLoggingIn(true);
 
-    // Generar token
-    const token = createToken(user);
-    localStorage.setItem(USER_STORAGE_KEY, token);
+    try {
+      const userFromBackend = await authApi.login(credentials);
+      setUser(userFromBackend);
+      return userFromBackend;
+    } catch (error) {
+      console.error(error);
+      return null;
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem(USER_STORAGE_KEY);
+    authApi.logout();
   };
 
-  const data = { user, login, logout };
+  const updateName = (newName) => {
+    const updatedUser = { ...user, name: newName };
+    setUser(updatedUser);
+    authApi.updateUser(updatedUser);
+  };
+
+  const data = { user, isLoggingIn, login, logout, updateName };
 
   return <AuthContext value={data}>{children}</AuthContext>;
 };

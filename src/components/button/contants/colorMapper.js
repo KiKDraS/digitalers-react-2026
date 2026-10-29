@@ -5,4 +5,6 @@ export const colorMapper = {
   success: "btn-success",
   info: "btn-info",
   danger: "btn-danger",
+  dark: "btn-dark",
+  light: "btn-light",
 };
