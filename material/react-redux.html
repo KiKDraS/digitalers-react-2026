@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase React: Introducción a Redux y Redux Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #2c3e50;
+            border-bottom: 2px solid #D63384;
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            border-bottom: none;
+        }
+
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        hr {
+            margin: 50px 0;
+            border-top: 1px solid #ddd;
+        }
+
+        .note {
+            background-color: #f0e3f7;
+            border-left: 4px solid #764ABC;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning-note {
+            background-color: #fffbe6;
+            border-left: 4px solid #f0ad4e;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .danger-note {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .table {
+            background-color: #fff;
+        }
+
+        .code-title {
+            font-weight: bold;
+            margin-bottom: -10px;
+            display: block;
+            color: #495057;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>React Redux: Manejo Avanzado del Estado ⚛️</h1>
+        <p class="lead text-center">Entendiendo Redux como librería y su uso moderno con Redux Toolkit.</p>
+        <p class="text-center">
+            <a href="https://redux.js.org/" target="_blank" rel="noopener">Documentación Redux</a> |
+            <a href="https://redux-toolkit.js.org/" target="_blank" rel="noopener">Documentación Redux Toolkit</a> |
+            <a href="https://react-redux.js.org/" target="_blank" rel="noopener">Documentación React Redux</a>
+        </p>
+    </div>
+
+    <div class="container">
+        <h2>¿Por Qué Necesitamos Redux? (El Problema del Estado Complejo)</h2>
+        <p>En aplicaciones React pequeñas, manejar el estado con <code>useState</code> y pasarlo con props funciona
+            bien. Pero a medida que la aplicación crece, surgen problemas:</p>
+        <ul>
+            <li><strong>Prop Drilling:</strong> Tener que pasar props a través de muchos niveles de componentes, incluso
+                si los intermedios no las usan.</li>
+            <li><strong>Estado Disperso:</strong> La lógica y los datos relacionados pueden terminar esparcidos por
+                muchos componentes, dificultando el seguimiento y la depuración.</li>
+            <li><strong>Complejidad:</strong> Actualizar el estado de forma consistente se vuelve complicado cuando
+                múltiples componentes interactúan con los mismos datos.</li>
+        </ul>
+        <p>Redux ofrece una solución centralizando el estado de tu aplicación en un solo lugar y estableciendo reglas
+            claras sobre cómo puede cambiar.</p>
+        <div class="note">
+            <strong>Analogía del Banco Central 🏦:</strong><br>
+            Imagina que el estado de tu app es el dinero de un país. En lugar de que cada persona (componente) imprima
+            su propio dinero (maneje su estado localmente de forma caótica), Redux actúa como un **Banco Central** (el
+            **Store**).
+            <ul>
+                <li>Todo el dinero (el **Estado**) está guardado en la bóveda del banco.</li>
+                <li>Si quieres hacer un depósito o retiro (cambiar el estado), no tocas el dinero directamente. Llenas
+                    un formulario (envías una **Acción**).</li>
+                <li>Un empleado del banco (el **Reducer**) toma tu formulario, verifica las reglas, y actualiza el saldo
+                    en la bóveda.</li>
+            </ul>
+            Es un sistema predecible y centralizado.
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>¿Cuándo usar Redux? 🤔</h2>
+        <p>Redux no es necesario en todos los proyectos. Antes de decidir, considera:</p>
+        <ul>
+            <li><strong>Tamaño de la aplicación:</strong> En aplicaciones pequeñas o medianas, Context API o Zustand pueden ser suficientes.</li>
+            <li><strong>Frecuencia de actualizaciones:</strong> Si el estado cambia muy seguido y es compartido por muchos componentes, Redux brinda herramientas de depuración y rendimiento.</li>
+            <li><strong>Complejidad del estado:</strong> Muchas acciones, relaciones entre datos, necesidad de undo/redo, etc.</li>
+            <li><strong>Equipo y escalabilidad:</strong> Redux impone una estructura que ayuda a que equipos grandes trabajen de forma consistente.</li>
+        </ul>
+        <div class="warning-note">
+            <strong>⚠️ Advertencia:</strong> No uses Redux por defecto. Para estados locales o datos que solo se comparten en una parte de la app, <code>useState</code> o Context API son más simples. Redux añade complejidad, así que debe justificarse.
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Context API</th>
+                    <th>Redux (Toolkit)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Complejidad de configuración</strong></td>
+                    <td>Baja</td>
+                    <td>Media (aunque RTK la reduce)</td>
+                </tr>
+                <tr>
+                    <td><strong>Cambios frecuentes</strong></td>
+                    <td>No recomendado sin optimización</td>
+                    <td>Buen rendimiento con selectores</td>
+                </tr>
+                <tr>
+                    <td><strong>Herramientas de depuración</strong></td>
+                    <td>Limitadas</td>
+                    <td>Excelentes (Redux DevTools)</td>
+                </tr>
+                <tr>
+                    <td><strong>Escalabilidad</strong></td>
+                    <td>Adecuada para apps medianas</td>
+                    <td>Pensada para apps grandes</td>
+                </tr>
+                <tr>
+                    <td><strong>Manejo de efectos asíncronos</strong></td>
+                    <td>Manual (useEffect)</td>
+                    <td>Integrado (createAsyncThunk)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <h2>Parte 1: Redux - La Librería de JavaScript Pura ⚙️</h2>
+        <p>Es crucial entender que **Redux no es exclusivo de React**. Es una librería independiente de JavaScript que
+            se puede usar con Angular, Vue, o incluso sin ningún framework.</p>
+        <p>Se basa en tres principios fundamentales:</p>
+        <ol>
+            <li><strong>Única Fuente de Verdad:</strong> Todo el estado de tu aplicación reside en un único objeto (el
+                **Store**).</li>
+            <li><strong>El Estado es de Solo Lectura:</strong> La única forma de cambiar el estado es emitiendo una
+                **Acción** (un objeto que describe qué pasó).</li>
+            <li><strong>Los Cambios se Hacen con Funciones Puras:</strong> Para especificar cómo cambia el estado en
+                respuesta a una acción, escribes funciones puras llamadas **Reducers**.</li>
+        </ol>
+
+        <h3>Conceptos Clave de Redux</h3>
+        <ul>
+            <li><strong>Store:</strong> El contenedor central que guarda todo el estado (<code>state</code>).</li>
+            <li><strong>State:</strong> Un objeto JavaScript simple que representa los datos de tu aplicación en un
+                momento dado.</li>
+            <li><strong>Action:</strong> Un objeto simple que describe un evento que ocurrió. Obligatoriamente tiene una
+                propiedad <code>type</code> (un string) y opcionalmente puede llevar datos (<code>payload</code>). Ej:
+                <code>{ type: 'INCREMENTAR_CONTADOR', payload: 1 }</code>.</li>
+            <li><strong>Reducer:</strong> Una función pura que toma el estado actual y una acción, y devuelve el
+                **nuevo** estado. <strong>Nunca modifica el estado original</strong>. Firma: <code>(currentState, action) =&gt;
+                newState</code>.</li>
+            <li><strong>Dispatch:</strong> La función del <code>store</code> que usas para enviar (despachar) acciones al reducer.</li>
+            <li><strong>Subscribe:</strong> La función del <code>store</code> que te permite registrar un "listener" que se
+                ejecutará cada vez que el estado cambie.</li>
+        </ul>
+
+        <h4>Ejemplo Simple (Vanilla JavaScript)</h4>
+        <p>Imaginemos un contador simple usando solo Redux.</p>
+        <div class="note">
+            <strong>Nota sobre el entorno:</strong> El siguiente ejemplo usa la variable global <code>Redux</code> (cargada desde el CDN). En un proyecto real con bundler, importarías con <code>import { createStore } from 'redux'</code>. Este script solo funciona en este HTML plano.
+        </div>
+        <pre><code class="language-javascript">
+// En un entorno real con bundler:
+// import { createStore } from 'redux';
+
+// 1. El Reducer: Decide cómo cambia el estado
+function counterReducer(state = { value: 0 }, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      // Devuelve un NUEVO objeto de estado
+      return { value: state.value + 1 };
+    case 'DECREMENT':
+      return { value: state.value - 1 };
+    default:
+      // Si no reconoce la acción, devuelve el estado sin cambios
+      return state;
+  }
+}
+
+// 2. Crear el Store con el reducer
+const store = Redux.createStore(counterReducer); // Usamos Redux global en este HTML
+
+// 3. Subscribe: Función que se ejecuta al cambiar el estado
+store.subscribe(() => {
+  console.log('El estado cambió:', store.getState());
+});
+
+// 4. Dispatch: Enviar acciones para cambiar el estado
+console.log('Estado inicial:', store.getState());
+
+store.dispatch({ type: 'INCREMENT' }); // Output: El estado cambió: { value: 1 }
+store.dispatch({ type: 'INCREMENT' }); // Output: El estado cambió: { value: 2 }
+store.dispatch({ type: 'DECREMENT' }); // Output: El estado cambió: { value: 1 }
+</code></pre>
+        <script src="https://unpkg.com/redux@latest/dist/redux.min.js"></script>
+    </div>
+
+    <div class="container">
+        <h2>Parte 2: React Redux - Conectando Redux con React 🔗</h2>
+        <p>Redux por sí solo no sabe nada de React. Necesitamos un "puente" para conectar nuestro <code>store</code> de Redux con
+            nuestros componentes de React. Ese puente es la librería **<code>react-redux</code>**.</p>
+        <p><code>react-redux</code> nos proporciona herramientas para:</p>
+        <ul>
+            <li>Hacer que el <code>store</code> de Redux esté disponible para toda la aplicación React.</li>
+            <li>Permitir que los componentes "lean" datos del estado de Redux.</li>
+            <li>Permitir que los componentes "despachen" acciones para actualizar el estado.</li>
+            <li>Asegurar que los componentes se re-rendericen automáticamente cuando cambian los datos del <code>store</code> que
+                les interesan.</li>
+        </ul>
+
+        <h3>Herramientas Clave de <code>react-redux</code></h3>
+        <ul>
+            <li><strong><code>&lt;Provider store={store}&gt;</code>:</strong> Un componente que envuelve tu aplicación
+                (usualmente en <code>main.jsx</code> o <code>index.js</code>). Hace que el <code>store</code> de Redux esté disponible para cualquier
+                componente anidado que lo necesite.</li>
+            <li><strong><code>useSelector(selectorFunction)</code>:</strong> Un hook que permite a un componente
+                funcional **leer** datos del <code>store</code>. La <code>selectorFunction</code> recibe todo el <code>state</code> y devuelve la porción
+                específica que el componente necesita. React Redux se encarga de volver a renderizar el componente si
+                ese dato cambia.</li>
+            <li><strong><code>useDispatch()</code>:</strong> Un hook que devuelve la función <code>dispatch</code> del <code>store</code>. La
+                usas para enviar acciones desde tus componentes.</li>
+        </ul>
+        <div class="note">
+            <strong>Antes de los Hooks:</strong> Existía una función llamada <code>connect</code> que hacía un trabajo
+            similar, pero era más compleja de usar. Con los hooks <code>useSelector</code> y <code>useDispatch</code>,
+            la integración es mucho más sencilla e intuitiva.
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Parte 3: Redux Toolkit (RTK) - La Forma Moderna y Simplificada ✨</h2>
+        <p>Escribir Redux "a mano" (como en el ejemplo de Vanilla JS) puede ser verboso:</p>
+        <ul>
+            <li>Crear constantes para los tipos de acción.</li>
+            <li>Escribir "action creators" (funciones que devuelven objetos de acción).</li>
+            <li>Configurar el <code>store</code> con middleware (como Thunk para acciones asíncronas) puede ser complicado.</li>
+            <li>Manejar la inmutabilidad (no modificar el estado directamente) requiere cuidado (ej. usar <code>...spread operator</code>).</li>
+        </ul>
+        <p><strong>Redux Toolkit (RTK)</strong> es la forma **oficial y recomendada** de escribir lógica de Redux hoy en
+            día. Fue creado por el equipo de Redux para simplificar todo esto.</p>
+
+        <h3>Beneficios Clave de RTK</h3>
+        <ul>
+            <li><strong>Menos Código (Boilerplate):</strong> Reduce drásticamente la cantidad de código repetitivo.</li>
+            <li><strong>Configuración Simple:</strong> <code>configureStore</code> configura automáticamente
+                herramientas útiles como Redux DevTools y Thunk.</li>
+            <li><strong>Inmutabilidad Simplificada:</strong> Usa una librería llamada Immer "bajo el capó", que te
+                permite escribir código que *parece* mutar el estado, pero Immer se encarga de producir el nuevo estado
+                inmutable correctamente.</li>
+            <li><strong>Buenas Prácticas Incluidas:</strong> Fomenta una estructura de código más organizada y
+                mantenible.</li>
+        </ul>
+
+        <h3>Herramientas Clave de RTK</h3>
+        <ul>
+            <li><strong><code>configureStore()</code>:</strong> Reemplaza al <code>createStore</code> original. Simplifica la
+                configuración del store, incluyendo reducers, middleware y DevTools.</li>
+            <li><strong><code>createSlice()</code>:</strong> ¡La joya de RTK! Permite definir un reducer, sus acciones y
+                el estado inicial en un solo lugar.
+                <ul>
+                    <li>Automáticamente genera los "action creators" y los "action types".</li>
+                    <li>Permite escribir lógica de reducer "mutante" gracias a Immer.</li>
+                </ul>
+            </li>
+            <li><strong><code>createAsyncThunk()</code>:</strong> Simplifica el manejo de acciones asíncronas (como llamadas a API).</li>
+        </ul>
+
+        <h3>Ejemplo del Contador con RTK y React</h3>
+        <p>Veamos cómo se ve nuestro contador usando RTK y los hooks de <code>react-redux</code>.</p>
+
+        <h4>Paso 1: Crear el "Slice" (<code>features/counter/counterSlice.js</code>)</h4>
+        <pre><code class="language-jsx">
+import { createSlice } from '@reduxjs/toolkit';
+
+// Estado inicial para este "slice" (pedazo) del estado global
+const initialState = {
+  value: 0,
+};
+
+// Creamos el slice
+export const counterSlice = createSlice({
+  name: 'counter', // Nombre del slice
+  initialState,
+  // Los "reducers" definen las acciones y cómo actualizan el estado
+  reducers: {
+    // Acción 'increment': El estado aquí SÍ se puede "mutar" gracias a Immer
+    increment: (state) => {
+      state.value += 1;
+    },
+    decrement: (state) => {
+      state.value -= 1;
+    },
+    // Acción que recibe un payload (valor)
+    incrementByAmount: (state, action) => {
+      state.value += action.payload;
+    },
+    // Acción para resetear
+    reset: (state) => {
+      state.value = 0;
+    },
+  },
+});
+
+// Exportamos las acciones generadas automáticamente por createSlice
+export const { increment, decrement, incrementByAmount, reset } = counterSlice.actions;
+
+// Exportamos el reducer generado para usarlo en el store
+export default counterSlice.reducer;
+</code></pre>
+
+        <h4>Paso 2: Configurar el Store (<code>app/store.js</code>)</h4>
+        <pre><code class="language-jsx">
+import { configureStore } from '@reduxjs/toolkit';
+// Importamos el reducer que creamos
+import counterReducer from '../features/counter/counterSlice';
+
+// configureStore combina reducers y configura middleware útil
+export const store = configureStore({
+  reducer: {
+    // Aquí definimos la estructura de nuestro estado global
+    // 'counter' será la clave para acceder al estado del counterSlice
+    counter: counterReducer,
+    // Podríamos añadir más reducers aquí (ej. user: userReducer)
+  },
+});
+</code></pre>
+
+        <h4>Paso 3: Proveer el Store (<code>main.jsx</code> o <code>index.js</code>)</h4>
+        <pre><code class="language-jsx">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux'; // Importar Provider de react-redux
+import { store } from './app/store'; // Importar nuestro store configurado
+import App from './App';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  &lt;React.StrictMode&gt;
+    {/* Envolvemos la App con el Provider y le pasamos el store */}
+    &lt;Provider store={store}&gt;
+      &lt;App /&gt;
+    &lt;/Provider&gt;
+  &lt;/React.StrictMode&gt;
+);
+</code></pre>
+
+        <h4>Paso 4: Usar el Estado y las Acciones en un Componente (<code>features/counter/Counter.js</code>)</h4>
+        <pre><code class="language-jsx">
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+// Importamos las acciones que exportamos desde el slice
+import { increment, decrement, incrementByAmount, reset } from './counterSlice';
+
+export function Counter() {
+  // 1. Leer datos del store con useSelector
+  //    El 'state.counter' coincide con la clave que definimos en configureStore
+  const count = useSelector((state) => state.counter.value);
+  
+  // 2. Obtener la función dispatch para enviar acciones
+  const dispatch = useDispatch();
+
+  return (
+    &lt;div className="card shadow-sm"&gt;
+      &lt;div className="card-body text-center"&gt;
+        &lt;h2 className="card-title"&gt;Contador Redux&lt;/h2&gt;
+        &lt;p className="display-4"&gt;{count}&lt;/p&gt;
+        &lt;div className="btn-group mb-3"&gt;
+          &lt;button 
+            className="btn btn-primary" 
+            onClick={() => dispatch(increment())} // Despachamos la acción importada
+          &gt;
+            +1 (Incrementar)
+          &lt;/button&gt;
+          &lt;button 
+            className="btn btn-secondary" 
+            onClick={() => dispatch(decrement())}
+          &gt;
+            -1 (Decrementar)
+          &lt;/button&gt;
+          &lt;button 
+            className="btn btn-success" 
+            onClick={() => dispatch(incrementByAmount(5))} // Acción con payload
+          &gt;
+            +5
+          &lt;/button&gt;
+          &lt;button 
+            className="btn btn-warning" 
+            onClick={() => dispatch(reset())} // Acción sin payload
+          &gt;
+            Reset
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+    </div>
+
+    <div class="container">
+        <h2>Bonus: Acciones Asíncronas con <code>createAsyncThunk</code> 🌐</h2>
+        <p>Cuando necesitamos hacer llamadas a una API dentro de Redux, <code>createAsyncThunk</code> simplifica el manejo de los tres estados: <code>pending</code>, <code>fulfilled</code> y <code>rejected</code>.</p>
+
+        <h4>Ejemplo: Obtener usuarios</h4>
+        <pre><code class="language-jsx">
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+// 1. Crear el thunk asíncrono
+export const fetchUsers = createAsyncThunk(
+  'users/fetchUsers',
+  async () => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/users');
+    return response.json();
+  }
+);
+
+const usersSlice = createSlice({
+  name: 'users',
+  initialState: {
+    items: [],
+    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null,
+  },
+  reducers: {},
+  // 2. Manejar los estados del thunk con extraReducers
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.items = action.payload;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
+});
+
+export default usersSlice.reducer;
+</code></pre>
+
+        <p>En el componente, se despacha el thunk y se usa el estado <code>status</code> para mostrar un spinner o los datos.</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+
+</html>

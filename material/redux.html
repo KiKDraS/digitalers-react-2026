@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redux Vanilla</title>
+</head>
+
+<body>
+    <div>
+        <p>
+            Clicked: <span id="value"></span> times
+            <button id="increment">+</button>
+            <button id="decrement">-</button>
+        </p>
+    </div>
+
+    <script type="module">
+        // Traer todo lo que hay en el CDN y guardarlo en la variable Redux
+        import * as Redux from 'https://unpkg.com/redux@latest/dist/redux.browser.mjs';
+
+        /*
+            Tres Principios de Redux
+                => Una sola fuente de la verdad: El store
+                => El State debe respetar el Principio de la Inmutabilidad
+                    -> No modificar el valor original. Crear una copia modificada
+                => Los cambios en el State se hacen mediante funciones puras (reducer)
+                    -> Función Pura
+                        -> No modifica ni trabaja con valores que no le pertenecen.
+                        -> Para el mismo valor de entrada, mismo valor de salida    
+            
+            Conceptos Clave
+                => Store - Contiene todos los valores de State que la App necesita
+                => Actions - Objeto Plano de JS (POJO - Plain Old JavaScript Object)
+                    -> Un Action describe cómo tiene que cambiar el State
+                        => {type: "", payload: ""}
+                            -> type: Qué acción debe realizar el Reducer
+                            -> payload(opcional): Los datos que se necesitan para cambiar el State
+                => Dispatch - Función que recibe como argumente el Action y ejecuta el Reducer
+                => Reducers - Función pura que recibe el valor anterior de State y el Action del dispatch y retorna el nuevo valor de State
+
+            Flujo de Trabajo de Redux
+                => 1.- Crear el Store
+                    -> 1.a - Definir el Root Reducer
+                => 2.- Crear las Action
+                => 3.- Dispatch de Action según necesidad        
+        */
+
+        // Action Types
+        const INCREMENT = "INCREMENT";
+        const DECREMENT = "DECREMENT"
+
+        // dispatch({type: INCREMENT})
+        // dispatch({type: INCREMENT, payload: 10})
+
+        // dispatch({type: DECREMENT, payload: 10})
+        // dispatch({type: DECREMENT, payload: 1})
+
+        // Action Creator - Función que retorna el objeto Action que necesitamos
+        const incrementAction = () => ({ type: INCREMENT });
+        // dispatch(incrementAction())
+
+        const decrementAction = (payload) => ({ type: DECREMENT, payload })
+        // dispatch(decrementAction(1))
+        // dispatch(decrementAction(10))
+
+        // Definir el Reducer
+        const counterReducer = (oldState, action) => {
+            // Cuando la app arranca, oldState es undefined
+            if (typeof oldState === "undefined") return { value: 0 };
+            // const [counter, setCounter] = useState({ value: 0 });
+
+            switch (action.type) {
+                case INCREMENT:
+                    return { ...oldState, value: oldState.value + 1 };
+
+                case DECREMENT:
+                    return { ...oldState, value: oldState.value - action.payload };
+
+                default:
+                    return oldState;
+            }
+        }
+
+        // Crear el Store
+        const store = Redux.createStore(counterReducer);
+
+
+        // Subscriber - Función render
+        const render = () => {
+            const valueElement = document.getElementById("value");
+            valueElement.textContent = store.getState().value.toString();
+        }
+
+        // Mostrar el valor inicial
+        render()
+
+        // Mantener el valor actualizado.
+        store.subscribe(render);
+
+
+        // Ejecutar los dispatch
+        const incrementButton = document.getElementById("increment");
+        const decrementButton = document.getElementById("decrement");
+
+        incrementButton.addEventListener("click", () => {
+            store.dispatch(incrementAction())
+        })
+
+        decrementButton.addEventListener("click", () => {
+            store.dispatch(decrementAction(1))
+        })
+    </script>
+</body>
+
+</html>
