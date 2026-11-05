@@ -1,4 +1,7 @@
-export const colorMapper = {
+import type { ButtonColor } from "../types";
+
+// Record<key, value>
+export const colorMapper: Record<ButtonColor, string> = {
   primary: "btn-primary",
   secondary: "btn-secondary",
   warning: "btn-warning",
