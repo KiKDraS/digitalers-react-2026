@@ -5,12 +5,10 @@ import App from "./App.tsx";
 // CSS de Bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
 
-// JS de Bootstrap
-import "bootstrap/dist/js/bootstrap.bundle.js";
-
 // Bootstrap Icons
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+// El ! (non-null assertion) le dice a TypeScript que #root existe.
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />

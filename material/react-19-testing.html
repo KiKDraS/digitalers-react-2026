@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clase React 19: Novedades y cambios importantes</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Prism.js para resaltado de sintaxis -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --react-blue: #61dafb;
+      --react-dark: #20232a;
+      --react-darker: #16181d;
+      --text-light: #e1e4e8;
+      --text-muted: #8b949e;
+      --border-color: #30363d;
+      --code-bg: #0d1117;
+      --body-bg: #f6f8fa;
+      --old-color: #d73a49;
+      --new-color: #28a745;
+      --note-bg: #f0f7ff;
+      --note-border: #4a90e2;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      color: #1f2328;
+      background-color: var(--body-bg);
+      padding-bottom: 3rem;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #20232a 0%, #16181d 100%);
+      color: #ffffff;
+      padding: 3rem 0;
+      border-bottom: 3px solid var(--react-blue);
+    }
+
+    .hero h1 {
+      font-weight: 700;
+      color: var(--react-blue);
+    }
+
+    .hero .lead {
+      color: #c9d1d9;
+    }
+
+    .content-wrapper {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Nav styles */
+    .sticky-nav {
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      top: 0;
+      z-index: 1000;
+      padding: 1rem 0;
+      border-bottom: 1px solid #d0d7de;
+    }
+
+    .sticky-nav .content-wrapper {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+      /* Firefox */
+    }
+
+    .sticky-nav .content-wrapper::-webkit-scrollbar {
+      display: none;
+      /* Chrome/Safari */
+    }
+
+    .card {
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+      background-color: #ffffff;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid #d0d7de;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 1rem 1.25rem;
+      border-radius: 12px 12px 0 0 !important;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    h2.section-title {
+      color: var(--react-dark);
+      border-left: 5px solid var(--react-blue);
+      padding-left: 15px;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      font-size: 1.8rem;
+      scroll-margin-top: 5rem;
+      /* Ajuste para el sticky nav */
+    }
+
+    h3 {
+      margin-top: 1.8rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: #24292f;
+    }
+
+    .code-block {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Estilos para el contenedor de código y botón copiar */
+    .code-container {
+      position: relative;
+      margin: 1rem 0;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      border-radius: 6px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .copy-btn.copied {
+      background: var(--new-color);
+      border-color: var(--new-color);
+      color: white;
+    }
+
+    pre {
+      background-color: var(--code-bg) !important;
+      border-radius: 10px;
+      padding: 1.2rem !important;
+      font-size: 0.9rem !important;
+      line-height: 1.6 !important;
+      overflow-x: auto;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      margin: 0 !important;
+      /* El margen lo da code-container */
+      border: 1px solid #30363d;
+    }
+
+    code {
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
+
+    .old-code {
+      border-left: 4px solid var(--old-color);
+    }
+
+    .new-code {
+      border-left: 4px solid var(--new-color);
+    }
+
+    .badge-old,
+    .badge-new {
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
+    .badge-old {
+      background-color: #fde8e8;
+      color: var(--old-color);
+    }
+
+    .badge-new {
+      background-color: #e6f4ea;
+      color: var(--new-color);
+    }
+
+    .note {
+      background-color: var(--note-bg);
+      border-left: 4px solid var(--note-border);
+      padding: 1rem 1.2rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+      color: #1f2328;
+    }
+
+    .note strong {
+      color: #0b5cad;
+    }
+
+    .responsive-table {
+      overflow-x: auto;
+    }
+
+    .table {
+      background-color: #ffffff;
+      border-radius: 8px;
+    }
+
+    .table th {
+      background-color: #f6f8fa;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: #6a737d;
+      border-top: 1px solid #d0d7de;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 576px) {
+      pre {
+        font-size: 0.8rem !important;
+        padding: 0.8rem !important;
+      }
+
+      .hero {
+        padding: 2rem 0;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .content-wrapper {
+        padding: 0 0.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="content-wrapper">
+      <h1 class="display-4">⚛️ React 19: Novedades y cambios importantes</h1>
+      <p class="lead">
+        use + ErrorBoundary, useTransition, useOptimistic, useActionState y
+        useFormStatus. Testing con Jest y React Testing Library.
+      </p>
+    </div>
+  </header>
+
+  <!-- Navegación Sticky -->
+  <nav class="sticky-nav position-sticky shadow-sm">
+    <div class="content-wrapper">
+      <a href="#use-error-boundary" class="btn btn-outline-primary btn-sm rounded-pill">use + ErrorBoundary</a>
+      <a href="#hook-usetransition" class="btn btn-outline-primary btn-sm rounded-pill">useTransition</a>
+      <a href="#hook-useoptimistic" class="btn btn-outline-primary btn-sm rounded-pill">useOptimistic</a>
+      <a href="#formularios" class="btn btn-outline-primary btn-sm rounded-pill">useActionState + useFormStatus</a>
+      <a href="#estructura" class="btn btn-outline-primary btn-sm rounded-pill">Estructura</a>
+      <a href="#testing-jest" class="btn btn-outline-primary btn-sm rounded-pill">Testing (Jest)</a>
+      <a href="#resumen" class="btn btn-outline-primary btn-sm rounded-pill">Resumen</a>
+    </div>
+  </nav>
+
+  <!-- Contenido Principal -->
+  <main class="content-wrapper">
+
+    <!-- ==================== USE + ERROR BOUNDARY ==================== -->
+    <h2 id="use-error-boundary" class="section-title">🛡️ ErrorBoundary + <code>use()</code></h2>
+    <div class="card mb-5">
+      <div class="card-header">🚨 Cargar promesas y capturar errores asíncronos</div>
+      <div class="card-body">
+        <p>
+          <code>use(promise)</code> lee una promesa durante el render. Si está pendiente,
+          el componente suspende y <code>Suspense</code> muestra su fallback. Si la
+          promesa se rechaza, el error se lanza durante el render y lo captura el
+          <code>ErrorBoundary</code> más cercano.
+        </p>
+
+        <h3>React 18: suspense, error manual y re-throw</h3>
+        <span class="badge-old">React 18</span>
+        <div class="code-block">
+          <pre class="old-code"><code class="language-tsx">
+// version-18/UserProfile.tsx
+const UserProfileContent = lazy(() =&gt; import("./UserProfileContent"));
+
+export function UserProfile({ fail }: { fail: boolean }) {
+  const userId = getUserId(fail);
+
+  return (
+    &lt;ErrorBoundary key={String(userId)} message="No se pudo cargar el usuario."&gt;
+      &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+        &lt;UserProfileContent userId={userId} /&gt;
+      &lt;/Suspense&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}
+
+// version-18/UserProfileContent.tsx
+export default function UserProfileContent({ userId }: { userId: number }) {
+  const [user, setUser] = useState&lt;User | null&gt;(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState&lt;Error | null&gt;(null);
+
+  useEffect(() =&gt; {
+    const fetchUser = async () =&gt; {
+      setLoading(true);
+      setError(null);
+
+      try {
+        setUser(await userApi.getById(userId));
+      } catch (err) {
+        setError(new Error(getErrorMessage(err, "Error al cargar")));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void fetchUser();
+  }, [userId]);
+
+  // ❌ El boundary no ve este error si solo lo mostramos en pantalla.
+  // Lo relanzamos durante el render para que sí lo capture.
+  if (error) throw error;
+  if (loading) return &lt;Spinner /&gt;;
+  if (!user) return null;
+  return &lt;UserProfileCard user={user} /&gt;;
+}
+                    </code></pre>
+        </div>
+
+        <h3>React 19: <code>use()</code> + <code>Suspense</code> + <code>ErrorBoundary</code></h3>
+        <span class="badge-new">React 19</span>
+        <div class="code-block">
+          <pre class="new-code"><code class="language-tsx">
+// version-19/UserProfile.tsx
+function UserProfileView({ userId }: { userId: number }) {
+  const user = use(userApi.getById(userId));
+  return &lt;UserProfileCard user={user} /&gt;;
+}
+
+export function UserProfile({ fail }: { fail: boolean }) {
+  const userId = getUserId(fail);
+
+  return (
+    &lt;ErrorBoundary key={String(userId)} message="No se pudo cargar el usuario."&gt;
+      &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+        &lt;UserProfileView userId={userId} /&gt;
+      &lt;/Suspense&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}
+                    </code></pre>
+        </div>
+
+        <div class="note">
+          <strong>Simulación de error:</strong> el demo alterna <code>fail</code>;
+          <code>getUserId(fail)</code> devuelve <code>999999</code> para forzar el
+          fallo. El <code>key={String(userId)}</code> remonta el
+          <code>ErrorBoundary</code> al cambiar el id y limpia su estado de error.
+        </div>
+
+        <h3>Cache con Map en el servicio</h3>
+        <span class="badge-new">Una promesa por usuario</span>
+        <div class="code-block">
+          <pre class="new-code"><code class="language-typescript">
+// Map: una promesa por usuario para reutilizarla y evitar duplicados.
+const userPromises = new Map&lt;number, Promise&lt;User&gt;&gt;();
+
+interface JsonPlaceholderUser {
+  id: number;
+  name: string;
+}
+
+// toUser: normaliza la respuesta y genera el avatar.
+const toUser = (data: JsonPlaceholderUser): User =&gt; ({
+  id: String(data.id),
+  name: data.name,
+  avatar: `https://api.dicebear.com/9.x/initials/svg?seed=${data.name}`,
+});
+
+const fetchUser = async (id: number): Promise&lt;User&gt; =&gt; {
+  const response = await fetch(`${USERS_API_URL}/${id}`);
+
+  if (!response.ok) {
+    throw new Error(`Usuario ${id} no encontrado`);
+  }
+
+  const data: JsonPlaceholderUser = await response.json();
+  return toUser(data);
+};
+
+const getById = (id: number): Promise&lt;User&gt; =&gt; {
+  const cached = userPromises.get(id);
+  if (cached) return cached;
+
+  // Si falla, la promesa queda en el Map para que React reciba
+  // siempre el mismo error y no repita la petición.
+  const promise = fetchUser(id);
+  userPromises.set(id, promise);
+  return promise;
+};
+
+const refetch = (id: number): Promise&lt;User&gt; =&gt; {
+  userPromises.delete(id);
+  return getById(id);
+};
+
+// Después de actualizar un usuario:
+// userPromises.delete(id);
+                    </code></pre>
+        </div>
+
+        <div class="note">
+          <strong>Importante:</strong> el <code>Map</code> vive en el servicio, así que
+          la misma promesa se comparte entre componentes y sobrevive a los remounts. Si
+          el fetch falla, la promesa se mantiene en el Map para evitar un loop de
+          peticiones. <code>refetch(id)</code> elimina la entrada y fuerza un nuevo
+          intento. Después de <code>updateName</code>, también se elimina la entrada
+          para evitar datos viejos.
+        </div>
+
+        <p class="small mb-0">
+          Documentación oficial:
+          <a href="https://es.react.dev/reference/react/use" target="_blank" rel="noreferrer">use()</a>
+          ·
+          <a href="https://es.react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary" target="_blank" rel="noreferrer">ErrorBoundary</a>
+        </p>
+      </div>
+    </div>
+    <!-- ==================== HOOK useTransition ==================== -->
+    <h2 id="hook-usetransition" class="section-title">🔄 Hook <code>useTransition</code></h2>
+    <div class="card mb-5">
+      <div class="card-header">⏳ Actualizaciones no urgentes</div>
+      <div class="card-body">
+        <p>
+          <code>useTransition</code> marca una actualización como no urgente. React puede
+          interrumpirla si el usuario sigue interactuando. No hace la API más rápida:
+          mantiene la interfaz disponible mientras el guardado ocurre en segundo plano.
+        </p>
+
+        <h3>React 18: carga inicial, lazy/Suspense y flag manual</h3>
+        <span class="badge-old">React 18</span>
+        <div class="code-block">
+          <pre class="old-code"><code class="language-tsx">
+// version-18/UpdateNameForm.tsx
+const UpdateNameFormContent = lazy(() =&gt; import("./UpdateNameFormContent"));
+
+export function UpdateNameForm() {
+  return (
+    &lt;ErrorBoundary message="No se pudo cargar o guardar el usuario."&gt;
+      &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+        &lt;UpdateNameFormContent userId={1} /&gt;
+      &lt;/Suspense&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}
+                    </code></pre>
+        </div>
+
+        <div class="code-block">
+          <pre class="old-code"><code class="language-tsx">
+// version-18/UpdateNameFormContent.tsx (extracto)
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState&lt;Error | null&gt;(null);
+const [isSaving, setIsSaving] = useState(false);
+
+useEffect(() =&gt; {
+  const loadUser = async () =&gt; {
+    try {
+      const user = await userApi.getById(userId);
+      updateForm((prev) =&gt; ({ ...prev, name: user.name }));
+    } catch (err) {
+      setError(new Error(getErrorMessage(err, "Error al cargar el usuario")));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  void loadUser();
+}, [updateForm, userId]);
+
+if (error) throw error;
+if (loading) return &lt;Spinner /&gt;;
+
+const handleSubmit = async (e) =&gt; {
+  e.preventDefault();
+  setIsSaving(true);
+  setError(null);
+
+  try {
+    const user = await userApi.updateName(userId, form.name);
+    setSavedName(user.name);
+  } catch (err) {
+    setError(new Error(getErrorMessage(err, "Error al guardar el nombre")));
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+&lt;Input ... disabled={isSaving} /&gt;
+                    </code></pre>
+        </div>
+
+        <h3>React 19: <code>use()</code> + <code>Suspense</code> y <code>useTransition</code></h3>
+        <span class="badge-new">React 19</span>
+        <div class="code-block">
+          <pre class="new-code"><code class="language-tsx">
+// version-19/UpdateNameForm.tsx
+export function UpdateNameForm() {
+  return (
+    &lt;ErrorBoundary message="No se pudo cargar o guardar el usuario."&gt;
+      &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+        &lt;UpdateNameFormContent userId={1} /&gt;
+      &lt;/Suspense&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}
+
+// version-19/UpdateFormNameContent.tsx (extracto)
+const user = use(userApi.getById(userId));
+const { form, handleChange } = useForm({ name: user.name });
+const [savedName, setSavedName] = useState&lt;string | null&gt;(null);
+const [isPending, startTransition] = useTransition();
+
+const handleSubmit = (e) =&gt; {
+  e.preventDefault();
+
+  startTransition(async () =&gt; {
+    const updatedUser = await userApi.updateName(userId, form.name);
+
+    // Después de un await, el set va dentro de otro startTransition.
+    startTransition(() =&gt; setSavedName(updatedUser.name));
+  });
+};
+
+&lt;Input ... /&gt; // ✅ no se deshabilita
+                    </code></pre>
+        </div>
+
+        <div class="note">
+          <strong>Diferencia:</strong> en React 18 <code>lazy()</code> suspende
+          mientras carga el chunk y <code>useEffect</code> carga los datos con un
+          spinner interno. En React 19 <code>use()</code> suspende directamente
+          mientras espera la promesa del usuario, así que el fallback de
+          <code>Suspense</code> cubre la carga inicial. En el guardado, React 18
+          bloquea el formulario con <code>isSaving</code>; React 19 mantiene el input
+          disponible y usa <code>isPending</code>.
+        </div>
+
+        <p class="small mb-0">
+          Documentación oficial:
+          <a href="https://es.react.dev/reference/react/useTransition" target="_blank" rel="noreferrer">useTransition</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== HOOK useOptimistic ==================== -->
+    <h2 id="hook-useoptimistic" class="section-title">⚡ Hook <code>useOptimistic</code></h2>
+    <div class="card mb-5">
+      <div class="card-header">💬 UI inmediata mientras la acción termina</div>
+      <div class="card-body">
+        <p>
+          <code>useOptimistic</code> muestra un valor temporal mientras una acción está en
+          curso. Cuando la acción termina, React reconcilia ese valor con el estado real.
+        </p>
+
+        <h3>React 18: el comentario aparece al terminar la API</h3>
+        <span class="badge-old">React 18</span>
+        <div class="code-block">
+          <pre class="old-code"><code class="language-tsx">
+import { useState } from "react";
+
+const [isSaving, setIsSaving] = useState(false);
+const [error, setError] = useState&lt;Error | null&gt;(null);
+
+const handleSubmit = async (e) =&gt; {
+  e.preventDefault();
+  const text = form.text.trim();
+  if (!text) return;
+
+  setIsSaving(true);
+  setError(null);
+
+  try {
+    const saved = await commentsApi.addComment(text);
+    setComments((prev) =&gt; [...prev, saved]);
+    updateForm({ text: "" });
+  } catch (err) {
+    setError(new Error(getErrorMessage(err, "Error al guardar el comentario")));
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+// El ErrorBoundary del componente padre captura este throw.
+if (error) throw error;
+                    </code></pre>
+        </div>
+
+        <h3>React 19: <code>useOptimistic</code> + <code>useTransition</code></h3>
+        <span class="badge-new">React 19</span>
+        <div class="code-block">
+          <pre class="new-code"><code class="language-tsx">
+import { useOptimistic, useTransition } from "react";
+
+const [isPending, startTransition] = useTransition();
+const [optimisticComments, addOptimisticComment] = useOptimistic(
+  comments,
+  (current, newComment) =&gt; [
+    ...current,
+    { ...newComment, pending: true },
+  ],
+);
+
+const handleSubmit = (e) =&gt; {
+  e.preventDefault();
+  const text = form.text.trim();
+  if (!text) return;
+
+  updateForm({ text: "" });
+
+  startTransition(async () =&gt; {
+    addOptimisticComment({ id: crypto.randomUUID(), text });
+
+    const saved = await commentsApi.addComment(text);
+
+    startTransition(() =&gt; {
+      setComments((prev) =&gt; [...prev, saved]);
+    });
+  });
+};
+                    </code></pre>
+        </div>
+
+        <div class="note">
+          <strong>Diferencia:</strong> el comentario optimista es temporal. Se muestra con
+          “Enviando...” y se reemplaza por el comentario confirmado cuando responde la
+          API. La actualización optimista debe ejecutarse dentro de una acción o
+          transición. Ambas versiones están envueltas en un <code>ErrorBoundary</code>:
+          React 18 guarda el error y lo relanza en el render; React 19 lo propaga
+          desde la transición.
+        </div>
+
+        <p class="small mb-0">
+          Documentación oficial:
+          <a href="https://es.react.dev/reference/react/useOptimistic" target="_blank" rel="noreferrer">useOptimistic</a>
+        </p>
+      </div>
+    </div>
+    <!-- ==================== FORMULARIOS Y ACTIONS ==================== -->
+    <h2 id="formularios" class="section-title">📝 useActionState + useFormStatus</h2>
+    <div class="card mb-5">
+      <div class="card-header">🚀 Formularios con Actions</div>
+      <div class="card-body">
+        <p>
+          Credenciales de prueba: <code>john@mail.com</code> / <code>changeme</code>.
+          La API es Platzi Fake Store.
+        </p>
+
+        <h3>React 18: formulario controlado y estado manual</h3>
+        <span class="badge-old">React 18</span>
+        <div class="code-block">
+          <pre class="old-code"><code class="language-tsx">
+// version-18/LoginFormContent.tsx (extracto)
+import { useState } from "react";
+import { useForm } from "../../../../components/form/hooks/useForm";
+import { getErrorMessage } from "../../../../utils/getErrorMessage";
+import { authApi } from "../../services/authApi";
+
+const { form, handleChange } = useForm({ email: "", password: "" });
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [message, setMessage] = useState&lt;LoginMessage | null&gt;(null);
+const [error, setError] = useState&lt;Error | null&gt;(null);
+
+const handleSubmit = async (e) =&gt; {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setMessage(null);
+  setError(null);
+
+  try {
+    const result = await authApi.login({
+      email: form.email,
+      password: form.password,
+    });
+    setMessage({
+      type: result.success ? "success" : "error",
+      text: result.message,
+    });
+  } catch (err) {
+    setError(new Error(getErrorMessage(err, "Error al iniciar sesión")));
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+// El ErrorBoundary del componente padre captura este throw.
+if (error) throw error;
+                    </code></pre>
+        </div>
+
+        <h3>React 19: <code>useActionState</code> + <code>useFormStatus</code></h3>
+        <span class="badge-new">React 19</span>
+        <div class="code-block">
+          <pre class="new-code"><code class="language-tsx">
+// version-19/LoginFormContent.tsx (extracto)
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
+
+interface LoginState {
+  error?: string;
+  success?: string;
+}
+
+async function loginAction(
+  _prevState: LoginState | null,
+  formData: FormData,
+): Promise&lt;LoginState&gt; {
+  const emailEntry = formData.get("email");
+  const passwordEntry = formData.get("password");
+  const email = typeof emailEntry === "string" ? emailEntry : "";
+  const password = typeof passwordEntry === "string" ? passwordEntry : "";
+  const result = await authApi.login({ email, password });
+
+  if (result.success) {
+    return { success: result.message };
+  }
+  return { error: result.message };
+}
+
+function SubmitButton() {
+  const { pending, data } = useFormStatus();
+  const email = data?.get("email");
+
+  return (
+    &lt;&gt;
+      &lt;FormSubmitButton
+        isPending={pending}
+        idleText="Iniciar sesión"
+        pendingText="Autenticando..."
+      /&gt;
+      {pending &amp;&amp; email &amp;&amp; (
+        &lt;p className="col-12 small text-muted mt-1 mb-0"&gt;
+          Enviando {String(email)}...
+        &lt;/p&gt;
+      )}
+    &lt;/&gt;
+  );
+}
+
+export function LoginFormContent() {
+  const [state, formAction] = useActionState(loginAction, null);
+
+  return (
+    &lt;Form action={formAction} title="Iniciar sesión"&gt;
+      &lt;Input label="Email" name="email" type="email" required /&gt;
+      &lt;Input label="Contraseña" name="password" type="password" required /&gt;
+      {state?.error &amp;&amp; (
+        &lt;Alert variant="danger" className="col-12 py-2"&gt;
+          {state.error}
+        &lt;/Alert&gt;
+      )}
+      {state?.success &amp;&amp; (
+        &lt;Alert variant="success" className="col-12 py-2"&gt;
+          {state.success}
+        &lt;/Alert&gt;
+      )}
+      &lt;SubmitButton /&gt;
+    &lt;/Form&gt;
+  );
+}
+                    </code></pre>
+        </div>
+
+        <p class="small text-muted">
+          En el proyecto, <code>version-18/LoginForm.tsx</code> y
+          <code>version-19/LoginForm.tsx</code> envuelven el contenido con
+          <code>ErrorBoundary</code>.
+        </p>
+
+        <h3>¿Cuándo usar cada uno?</h3>
+        <ul>
+          <li>
+            <strong><code>useActionState</code></strong>: estado del resultado de la
+            action, validación, errores y mensajes de éxito.
+          </li>
+          <li>
+            <strong><code>useFormStatus</code></strong>: pending y data del formulario,
+            leído desde un componente hijo como el botón de envío.
+          </li>
+        </ul>
+
+        <div class="note">
+          <strong>Importante:</strong> los errores esperados se devuelven como estado;
+          los errores inesperados se lanzan y los captura el <code>ErrorBoundary</code>.
+        </div>
+
+        <p class="small mb-0">
+          Documentación oficial:
+          <a href="https://es.react.dev/reference/react/useActionState" target="_blank" rel="noreferrer">useActionState</a>
+          ·
+          <a href="https://es.react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noreferrer">useFormStatus</a>
+        </p>
+      </div>
+    </div>
+    <!-- ==================== TESTING CON JEST ==================== -->
+    <h2 id="testing-jest" class="section-title">🧪 Testing con Jest y React Testing Library</h2>
+    <div class="card mb-5">
+      <div class="card-header">⚙️ Configuración con Jest</div>
+      <div class="card-body">
+        <p>
+          Usamos <strong>Jest</strong> con <strong>React Testing Library</strong> para
+          interactuar con los componentes como lo haría un usuario.
+        </p>
+
+        <h3>1. Instalación de dependencias</h3>
+        <div class="code-block">
+          <pre><code class="language-bash">
+pnpm add -D jest @testing-library/react @testing-library/jest-dom @testing-library/user-event ts-jest @types/jest jest-environment-jsdom
+                    </code></pre>
+        </div>
+
+        <h3>2. Configuración de Jest</h3>
+        <div class="code-block">
+          <pre><code class="language-javascript">
+// jest.config.cjs
+module.exports = {
+  preset: "ts-jest",
+  testEnvironment: "jest-environment-jsdom",
+  setupFilesAfterEnv: ["&lt;rootDir&gt;/jest.setup.ts"],
+  testMatch: ["&lt;rootDir&gt;/__tests__/**/*.test.{ts,tsx}"],
+  transform: {
+    "^.+\\.tsx?$": ["ts-jest", { tsconfig: "tsconfig.test.json" }],
+  },
+};
+                    </code></pre>
+        </div>
+
+        <div class="code-block">
+          <pre><code class="language-typescript">
+// jest.setup.ts
+import "@testing-library/jest-dom";
+import { cleanup } from "@testing-library/react";
+
+afterEach(() =&gt; {
+  cleanup();
+});
+                    </code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-5">
+      <div class="card-header">✅ Ejemplo con el componente Button</div>
+      <div class="card-body">
+        <h3>El componente</h3>
+        <div class="code-block">
+          <pre><code class="language-tsx">
+import type { ButtonHTMLAttributes, PropsWithChildren } from "react";
+import { colorMapper } from "./constants/colorMapper";
+import type { ButtonColor } from "./types";
+
+interface ButtonProps
+  extends
+    Omit&lt;ButtonHTMLAttributes&lt;HTMLButtonElement&gt;, "color"&gt;,
+    PropsWithChildren {
+  text?: string;
+  color?: ButtonColor;
+}
+
+export const Button = ({
+  text,
+  type = "button",
+  color = "primary",
+  className,
+  children,
+  ...rest
+}: ButtonProps) =&gt; {
+  return (
+    &lt;button
+      type={type}
+      className={`btn ${colorMapper[color]} ${className ?? ""}`}
+      {...rest}
+    &gt;
+      {children ?? text}
+    &lt;/button&gt;
+  );
+};
+                    </code></pre>
+        </div>
+
+        <h3>El test</h3>
+        <div class="code-block">
+          <pre><code class="language-tsx">
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Button } from "../../../src/components/button/Button";
+
+describe("Button", () =&gt; {
+  it("renderiza el texto pasado por la prop `text`", () =&gt; {
+    render(&lt;Button text="Guardar" /&gt;);
+
+    expect(screen.getByRole("button", { name: "Guardar" })).toBeInTheDocument();
+  });
+
+  it("renderiza `children` y los prioriza sobre `text`", () =&gt; {
+    render(
+      &lt;Button text="Guardar"&gt;
+        &lt;span&gt;Enviar&lt;/span&gt;
+      &lt;/Button&gt;,
+    );
+
+    expect(screen.getByRole("button", { name: "Enviar" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Guardar" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("aplica la clase por defecto `btn btn-primary` cuando no se pasa color", () =&gt; {
+    render(&lt;Button text="Aceptar" /&gt;);
+
+    const button = screen.getByRole("button", { name: "Aceptar" });
+    expect(button).toHaveClass("btn", "btn-primary");
+  });
+
+  it("aplica la clase mapeada según el color y conserva `className` extra", () =&gt; {
+    render(&lt;Button text="Eliminar" color="danger" className="me-2" /&gt;);
+
+    const button = screen.getByRole("button", { name: "Eliminar" });
+    expect(button).toHaveClass("btn", "btn-danger", "me-2");
+  });
+
+  it('usa `type="button"` por defecto para no enviar formularios', () =&gt; {
+    render(&lt;Button text="Enviar" /&gt;);
+
+    const button = screen.getByRole("button", { name: "Enviar" });
+    expect(button).toHaveAttribute("type", "button");
+  });
+
+  it("permite sobreescribir el `type` (ej. submit)", () =&gt; {
+    render(&lt;Button text="Enviar" type="submit" /&gt;);
+
+    const button = screen.getByRole("button", { name: "Enviar" });
+    expect(button).toHaveAttribute("type", "submit");
+  });
+
+  it("dispara `onClick` cuando el usuario hace clic", async () =&gt; {
+    const user = userEvent.setup();
+    const onClick = jest.fn();
+
+    render(&lt;Button text="Incrementar" onClick={onClick} /&gt;);
+    await user.click(screen.getByRole("button", { name: "Incrementar" }));
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("propaga atributos nativos del &lt;button&gt; (disabled, aria-label)", () =&gt; {
+    render(&lt;Button text="Cargando" disabled aria-label="Botón de carga" /&gt;);
+
+    const button = screen.getByRole("button", { name: "Botón de carga" });
+    expect(button).toBeDisabled();
+  });
+});
+                    </code></pre>
+        </div>
+
+        <p class="small text-muted">
+          Archivo real: <code>__tests__/components/button/Button.test.tsx</code>
+          (8 tests).
+        </p>
+
+        <div class="note">
+          <strong>Recordatorio:</strong> <code>getBy*</code> falla si no encuentra el
+          elemento; <code>queryBy*</code> devuelve <code>null</code> y es útil para
+          comprobar que algo no existe. <code>userEvent</code> simula la interacción real.
+        </div>
+      </div>
+    </div>
+    <!-- ==================== ESTRUCTURA DEL PROYECTO ==================== -->
+    <h2 id="estructura" class="section-title">🧱 Estructura del proyecto</h2>
+    <div class="card mb-5">
+      <div class="card-header">🗂️ Cómo está organizado el demo</div>
+      <div class="card-body">
+        <p>
+          El proyecto se ejecuta con una sola versión de React (React 19). Las carpetas
+          <code>version-18</code> y <code>version-19</code> no cambian el runtime:
+          contienen los patrones “antes” y “ahora” que se comparan en cada pestaña.
+        </p>
+
+        <ul>
+          <li>
+            <strong><code>version-18</code> / <code>version-19</code></strong>: componentes
+            específicos de cada patrón. Los archivos no llevan sufijo; el alias se define
+            al importarlos desde el demo padre.
+          </li>
+          <li>
+            <strong><code>ReactVersionProvider</code></strong>: guarda la versión
+            seleccionada de forma global y la persiste en <code>localStorage</code> con la
+            clave <code>digitalers-react-version</code>.
+          </li>
+          <li>
+            <strong><code>DemoTabs</code></strong>: mantiene el estado de la pestaña activa
+            para que el header y el provider no se re-rendericen al cambiar de tab.
+          </li>
+          <li>
+            <strong><code>DemoCard</code></strong>: muestra el toggle de versión y renderiza
+            el contenido seleccionado.
+          </li>
+          <li>
+            <strong><code>ErrorBoundary</code></strong>: se divide en
+            <code>ErrorBoundary.tsx</code> (mensaje + Alert) y
+            <code>ErrorBoundaryComponent.tsx</code> (boundary de clase).
+          </li>
+          <li>
+            <strong><code>components</code></strong>: componentes compartidos como
+            <code>Button</code>, <code>Form</code>, <code>Input</code>,
+            <code>Spinner</code> y <code>Alert</code>.
+          </li>
+        </ul>
+
+        <p class="small text-muted mb-0">
+          Las diferencias de cada pestaña son de patrón de código, no de versión instalada
+          de React.
+        </p>
+      </div>
+    </div>
+
+    <!-- Tabla comparativa final -->
+    <h2 id="resumen" class="section-title">📊 Resumen comparativo</h2>
+    <div class="card mb-5">
+      <div class="card-body">
+        <div class="responsive-table">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Característica</th>
+                <th>Antes (React 18)</th>
+                <th>Ahora (React 19)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Datos y errores async</strong></td>
+                <td><code>useEffect</code> + estados manuales + re-throw</td>
+                <td><code>use()</code> + Map cache + <code>Suspense</code> + <code>ErrorBoundary</code></td>
+              </tr>
+              <tr>
+                <td><strong>Carga inicial en useTransition</strong></td>
+                <td><code>lazy</code> + <code>Suspense</code> para el chunk; <code>useEffect</code> + <code>loading</code> para los datos</td>
+                <td><code>use()</code> + <code>Suspense</code>; el fallback cubre la promesa de datos</td>
+              </tr>
+              <tr>
+                <td><strong>Transiciones</strong></td>
+                <td>Flag manual (<code>isSaving</code>) que bloquea el formulario</td>
+                <td><code>useTransition</code> + <code>isPending</code>; el input sigue disponible</td>
+              </tr>
+              <tr>
+                <td><strong>UI optimista</strong></td>
+                <td>El resultado aparece al terminar la API</td>
+                <td><code>useOptimistic</code> muestra el cambio inmediato</td>
+              </tr>
+              <tr>
+                <td><strong>Formularios</strong></td>
+                <td>Estado controlado + <code>isSubmitting</code> manual</td>
+                <td><code>useActionState</code> + <code>useFormStatus</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>⚛️ Clase React 19 · Ejemplos con TypeScript</p>
+  </footer>
+
+  <!-- Prism.js scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+  <!-- Script para los botones de copiar -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre').forEach(pre => {
+        // Crear contenedor envolvente
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-container';
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+
+        // Crear botón
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.innerText = 'Copiar';
+
+        // Funcionalidad de copiado
+        copyBtn.addEventListener('click', async () => {
+          const code = pre.querySelector('code').innerText;
+          try {
+            await navigator.clipboard.writeText(code);
+            copyBtn.innerText = '¡Copiado!';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              copyBtn.innerText = 'Copiar';
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            console.error('Error al copiar el texto: ', err);
+          }
+        });
+
+        wrapper.appendChild(copyBtn);
+      });
+    });
+  </script>
+</body>
+
+</html>
