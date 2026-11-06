@@ -7,8 +7,8 @@ import { TodoItem } from "./TodoItem";
 export default function TodoList() {
   const dispatch = useAppDispatch();
   // const todosState = useAppSelector(store => store.todos);
-  // const { todos, status, error } = todosState;
-  const { todos, status, error } = useAppSelector((store) => store.todos);
+  // const { todos, error } = todosState;
+  const { todos, error } = useAppSelector((store) => store.todos);
 
   useEffect(() => {
     void dispatch(fetchTodos());
