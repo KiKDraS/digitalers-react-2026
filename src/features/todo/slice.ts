@@ -33,10 +33,19 @@ export const todoSlice = createSlice({
         state.error = action.error.message || "Error al cargar las tareas";
       })
       // POST
+      .addCase(addTodo.pending, (state) => {
+        state.error = null;
+        state.status = STATUS.PENDING;
+      })
       .addCase(addTodo.fulfilled, (state, action: PayloadAction<Todo>) => {
         state.todos.push(action.payload);
+        state.status = STATUS.FULFILLED;
       })
       // PUT
+      .addCase(toggleTodo.pending, (state) => {
+        state.error = null;
+        state.status = STATUS.PENDING;
+      })
       .addCase(toggleTodo.fulfilled, (state, action: PayloadAction<Todo>) => {
         const index = state.todos.findIndex(
           (todo) => todo.id === action.payload.id,
@@ -45,6 +54,7 @@ export const todoSlice = createSlice({
         if (index === -1) return;
 
         state.todos[index] = action.payload;
+        state.status = STATUS.FULFILLED;
 
         // findIndex devuelve -1 si no encuentra el elemento
         // if (index !== -1) {
@@ -52,8 +62,13 @@ export const todoSlice = createSlice({
         // }
       })
       // DELETE
+      .addCase(deleteTodo.pending, (state) => {
+        state.error = null;
+        state.status = STATUS.PENDING;
+      })
       .addCase(deleteTodo.fulfilled, (state, action: PayloadAction<string>) => {
         state.todos = state.todos.filter((todo) => todo.id !== action.payload);
+        state.status = STATUS.FULFILLED;
       })
       // Global Error Handler
       .addMatcher(isRejected, (state, action) => {

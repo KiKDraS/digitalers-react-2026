@@ -9,14 +9,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = ({
+  text,
   type = "button",
-  text = "Mi Botón",
   color = "primary",
+  children,
   ...rest
 }: ButtonProps) => {
   return (
     <button type={type} className={`btn ${colorMapper[color]}`} {...rest}>
-      {text}
+      {/* children ?? text: usa children si existe, si no usa text */}
+      {children ?? text}
     </button>
   );
 };

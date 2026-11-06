@@ -1,0 +1,3 @@
+.noHoverBg {
+    --bs-btn-hover-bg: transparent !important;
+}
