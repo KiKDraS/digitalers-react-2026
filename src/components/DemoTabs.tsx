@@ -43,6 +43,7 @@ const TABS: Tab[] = [
 
 export const DemoTabs = () => {
   const [activeId, setActiveId] = useState(TABS[0].id);
+  // activeTab === derived state
   const activeTab = TABS.find((tab) => tab.id === activeId) ?? TABS[0];
 
   return (

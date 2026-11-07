@@ -5,7 +5,6 @@ import { Form } from "../../../../components/form/Form";
 import { FormSubmitButton } from "../../../../components/form/FormSubmitButton";
 import { useForm } from "../../../../components/form/hooks/useForm";
 import { Input } from "../../../../components/form/Input";
-import { Spinner } from "../../../../components/Spinner";
 import { getErrorMessage } from "../../../../utils/getErrorMessage";
 import { userApi } from "../../../users/services/userApi";
 
@@ -21,7 +20,6 @@ export default function UpdateNameFormContent({
   const { form, handleChange, updateForm } = useForm({ name: "" });
   // string | null: el nombre guardado o null antes de guardar.
   const [savedName, setSavedName] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   // Error | null: error inesperado que se relanza en el render.
   const [error, setError] = useState<Error | null>(null);
   // boolean: true mientras la API responde; bloquea input y botón.
@@ -36,8 +34,6 @@ export default function UpdateNameFormContent({
       } catch (err) {
         // ❌ Un error async no llega solo al ErrorBoundary.
         setError(new Error(getErrorMessage(err, "Error al cargar el usuario")));
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -63,8 +59,6 @@ export default function UpdateNameFormContent({
 
   // El ErrorBoundary del componente padre captura este throw.
   if (error) throw error;
-
-  if (loading) return <Spinner />;
 
   return (
     <Form onSubmit={handleSubmit} title="Actualizar nombre">

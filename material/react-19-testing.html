@@ -324,21 +324,17 @@ export function UserProfile({ fail }: { fail: boolean }) {
 // version-18/UserProfileContent.tsx
 export default function UserProfileContent({ userId }: { userId: number }) {
   const [user, setUser] = useState&lt;User | null&gt;(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState&lt;Error | null&gt;(null);
 
   useEffect(() =&gt; {
     const fetchUser = async () =&gt; {
-      setLoading(true);
       setError(null);
 
       try {
         setUser(await userApi.getById(userId));
       } catch (err) {
         setError(new Error(getErrorMessage(err, "Error al cargar")));
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
     void fetchUser();
@@ -347,7 +343,6 @@ export default function UserProfileContent({ userId }: { userId: number }) {
   // ❌ El boundary no ve este error si solo lo mostramos en pantalla.
   // Lo relanzamos durante el render para que sí lo capture.
   if (error) throw error;
-  if (loading) return &lt;Spinner /&gt;;
   if (!user) return null;
   return &lt;UserProfileCard user={user} /&gt;;
 }
@@ -449,7 +444,8 @@ const refetch = (id: number): Promise&lt;User&gt; =&gt; {
           Documentación oficial:
           <a href="https://es.react.dev/reference/react/use" target="_blank" rel="noreferrer">use()</a>
           ·
-          <a href="https://es.react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary" target="_blank" rel="noreferrer">ErrorBoundary</a>
+          <a href="https://es.react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+            target="_blank" rel="noreferrer">ErrorBoundary</a>
         </p>
       </div>
     </div>
@@ -486,7 +482,6 @@ export function UpdateNameForm() {
         <div class="code-block">
           <pre class="old-code"><code class="language-tsx">
 // version-18/UpdateNameFormContent.tsx (extracto)
-const [loading, setLoading] = useState(true);
 const [error, setError] = useState&lt;Error | null&gt;(null);
 const [isSaving, setIsSaving] = useState(false);
 
@@ -497,16 +492,13 @@ useEffect(() =&gt; {
       updateForm((prev) =&gt; ({ ...prev, name: user.name }));
     } catch (err) {
       setError(new Error(getErrorMessage(err, "Error al cargar el usuario")));
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   void loadUser();
 }, [updateForm, userId]);
 
 if (error) throw error;
-if (loading) return &lt;Spinner /&gt;;
 
 const handleSubmit = async (e) =&gt; {
   e.preventDefault();
@@ -575,7 +567,8 @@ const handleSubmit = (e) =&gt; {
 
         <p class="small mb-0">
           Documentación oficial:
-          <a href="https://es.react.dev/reference/react/useTransition" target="_blank" rel="noreferrer">useTransition</a>
+          <a href="https://es.react.dev/reference/react/useTransition" target="_blank"
+            rel="noreferrer">useTransition</a>
         </p>
       </div>
     </div>
@@ -669,7 +662,8 @@ const handleSubmit = (e) =&gt; {
 
         <p class="small mb-0">
           Documentación oficial:
-          <a href="https://es.react.dev/reference/react/useOptimistic" target="_blank" rel="noreferrer">useOptimistic</a>
+          <a href="https://es.react.dev/reference/react/useOptimistic" target="_blank"
+            rel="noreferrer">useOptimistic</a>
         </p>
       </div>
     </div>
@@ -823,9 +817,11 @@ export function LoginFormContent() {
 
         <p class="small mb-0">
           Documentación oficial:
-          <a href="https://es.react.dev/reference/react/useActionState" target="_blank" rel="noreferrer">useActionState</a>
+          <a href="https://es.react.dev/reference/react/useActionState" target="_blank"
+            rel="noreferrer">useActionState</a>
           ·
-          <a href="https://es.react.dev/reference/react-dom/hooks/useFormStatus" target="_blank" rel="noreferrer">useFormStatus</a>
+          <a href="https://es.react.dev/reference/react-dom/hooks/useFormStatus" target="_blank"
+            rel="noreferrer">useFormStatus</a>
         </p>
       </div>
     </div>
@@ -1072,7 +1068,8 @@ describe("Button", () =&gt; {
               </tr>
               <tr>
                 <td><strong>Carga inicial en useTransition</strong></td>
-                <td><code>lazy</code> + <code>Suspense</code> para el chunk; <code>useEffect</code> + <code>loading</code> para los datos</td>
+                <td><code>lazy</code> + <code>Suspense</code> para el chunk; <code>useEffect</code> +
+                  <code>loading</code> para los datos</td>
                 <td><code>use()</code> + <code>Suspense</code>; el fallback cubre la promesa de datos</td>
               </tr>
               <tr>
