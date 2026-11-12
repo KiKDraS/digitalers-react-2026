@@ -1,7 +1,10 @@
+import { ErrorBoundary } from "../../../../components/errorBoundary/ErrorBoundary";
+import { CommentFormContent } from "../version-19/CommentFormContent";
+
 export function CommentForm() {
   return (
-    <div>
-      <h1>Comment Form v19</h1>
-    </div>
+    <ErrorBoundary message="No se pudo guardar el comentario">
+      <CommentFormContent />
+    </ErrorBoundary>
   );
 }

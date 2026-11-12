@@ -48,6 +48,15 @@ function UserProfileViewPromise({ promise }: Readonly<UserProfileViewPromise>) {
   return <UserProfileCard user={user} />;
 }
 
+const promiseUser = async (): Promise<User> => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/users");
+
+  if (!res.ok) {
+    throw new Error("Error al obtener la información del usuario");
+  }
+  return res.json();
+};
+
 // ✅ React 19: use() + Suspense + ErrorBoundary, sin estados manuales.
 export function UserProfilePromise({ fail }: Readonly<UserProfileProps>) {
   const userId = getUserId(fail);
@@ -57,8 +66,10 @@ export function UserProfilePromise({ fail }: Readonly<UserProfileProps>) {
         throw new Error("Error al obtener la información del usuario");
       }
       return res.json() as Promise<User>;
+      // return res.json();
     },
   );
+  // const promise = promiseUser();
 
   return (
     <ErrorBoundary key={String(userId)} message="No se pudo cargar el usuario">

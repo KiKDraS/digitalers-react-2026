@@ -1,7 +1,10 @@
+import { ErrorBoundary } from "../../../../components/errorBoundary/ErrorBoundary";
+import { LoginFormContent } from "./LoginFormContent";
+
 export function LoginForm() {
   return (
-    <div>
-      <h1>Formularios v19</h1>
-    </div>
+    <ErrorBoundary message="No se pudo procesar el inicio de sesión">
+      <LoginFormContent />
+    </ErrorBoundary>
   );
 }
